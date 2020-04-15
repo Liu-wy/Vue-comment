@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>评论</title>
+    <link rel="stylesheet" href="../public/bootstrap-3.3.7/dist/css/bootstrap.min.css">
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app" v-cloak>
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">评论详情</h3>
+            </div>
+            <div class="panel-body form-inline">
+                <label for="user_name">用户名：</label>
+                <input type="text" id="user_name" class="form-control" v-model='id' v-focus>
+                <label for="text">内容：</label>
+                <textarea class="form-control" rows="3"  v-model='content' ></textarea>
+                <button type="button" class="btn btn-primary" @click='add'>评论</button>
+                <label for="ser">搜索关键字：</label>
+                <input type="text" class="form-control" id="ser" v-model='keyWord'>
+                    
+              </div>
+        </div>
+        
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>用户名</th>
+                    <th>内容</th>
+                    <th>时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for='(item,index) in search(keyWord)'>
+                    <td>{{item.id}}</td>
+                    <td>{{item.content}}</td>
+                    <td>{{item.ctime | time}}</td>
+                    <td><a href="#" @click='del(index)'>删除</a></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        
+        
+        
+    </div>
+</body>
+<script src="../public/js/vue-2.4.0(1).js"></script>
+<script>
+    //格式化时间
+    Vue.filter('time', function () {
+        var times = new Date();
+        var y = times.getFullYear();
+        var m = (times.getMonth() + 1).toString().padStart(2, '0');
+        var d = (times.getDate()).toString().padStart(2, '0');
+        var h = (times.getHours()).toString().padStart(2, '0');
+        var min = (times.getMinutes()).toString().padStart(2, '0');
+        var s = (times.getSeconds()).toString().padStart(2, '0');
+        return `${y}-${m}-${d}  ${h}:${min}:${s}`;
+    })
+
+
+
+
+    let vm = new Vue({
+        el: '#app',
+        data: {
+            id: '',
+            content: '',
+            ctime: '',
+            keyWord:'',
+            list: [
+                { id: '张三', content: '今天天气真好', ctime: new Date() },
+                { id: '李四', content: '微风习习，春风吹拂大地的感觉真好', ctime: new Date() },
+                { id: '王五', content: '今年就要毕业了', ctime: new Date() }
+            ]
+        },
+        methods: {
+            add() {
+                this.list.push({ id: this.id, content: this.content, ctime: new Date() })
+            },
+            del(index) {
+                for (var i = 0; i < this.list.length; i++) {
+                    if (i === index) {
+                        this.list.splice(i, 1)
+                    }
+                }
+
+            },
+            search(keyWord) {
+                return this.list.filter(item => {
+                    if (item.content.includes(keyWord)||item.id.includes(keyWord)) {
+                        return item;
+                    }
+                })
+            }
+        },
+        directives: {
+            focus: {
+                bind(el, binding) {
+
+                },
+                inserted(el, binding) {
+                    el.focus()
+                },
+                updated(el, binding) {
+
+                }
+            }
+        }
+
+    })
+
+
+</script>
+</html>
